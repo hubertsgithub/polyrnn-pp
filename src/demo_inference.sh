@@ -8,7 +8,8 @@ python src/inference.py \
     --GGNN_checkpoint='models/ggnn/ggnn.ckpt' \
     --GGNN_metagraph='models/ggnn/ggnn.ckpt.meta' \
     --OutputFolder='output/' \
-    --Use_ggnn=True
+    --Use_ggnn=True \
+	--overwrite=False
 
 python src/vis_predictions.py \
     -pred_dir='output/' \

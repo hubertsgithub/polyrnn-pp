@@ -27,6 +27,7 @@ flags.DEFINE_string('GGNN_checkpoint', '', 'GGNN poly checkpoint ')
 flags.DEFINE_string('InputFolder', '../imgs/', 'Folder with input image crops')
 flags.DEFINE_string('OutputFolder', '../output/', 'OutputFolder')
 flags.DEFINE_boolean('Use_ggnn', False, 'Use GGNN to postprocess output')
+flags.DEFINE_boolean('overwrite', True, 'Overwrite outputs')
 
 #
 
@@ -92,6 +93,11 @@ def inference(_):
     crops_path = glob.glob(os.path.join(FLAGS.InputFolder, '*.png'))
 
     for crop_path in tqdm.tqdm(crops_path):
+        if not FLAGS.overwrite:
+            crop_name = os.path.basename(crop_path).replace(".png", ".json")
+            if os.path.exists(os.path.join(FLAGS.OutputFolder, crop_name)):
+                tf.logging.info("Output {} exists; skipping...".format(crop_name))
+                continue
         image_np = io.imread(crop_path)
         image_np = np.expand_dims(image_np, axis=0)
         preds = [model.do_test(polySess, image_np, top_k) for top_k in range(_FIRST_TOP_K)]
